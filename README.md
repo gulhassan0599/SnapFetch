@@ -1,110 +1,77 @@
-# SnapFetch 🚀
+# SnapFetch
 
-SnapFetch is a modern, full-stack media downloader web application built with **React**, **Vite**, **Tailwind CSS**, **Node.js**, **Express**, and **yt-dlp**. It supports real-time multi-download queues, live telemetry streaming via Server-Sent Events (SSE), audio extraction with FFmpeg, and resolutions up to 4K.
+A web application for media processing, format conversion, and stream analysis with real-time progress updates.
 
----
+## Live Deployments
 
-## ✨ Features
-
-- **Multi-Download FIFO Queue**: Concurrency-controlled download pipeline preventing CPU & network choking.
-- **Real-Time Telemetry via SSE**: Live download progress bars, speed metrics, ETA countdowns, and queue position tracking.
-- **High-Resolution Support**: Downloads up to 4K (2160p), 2K (1440p), 1080p, 720p, 480p, and MP3 audio extraction.
-- **yt-dlp Auto-Updater**: Background self-updater on startup and every 24 hours to stay compatible with platform changes.
-- **Request Platform Form**: Integrated with EmailJS for submitting unsupported site requests with local storage backup.
-- **Responsive & Accessible UI**: Built with Tailwind CSS v4, supporting both Light and Dark modes.
+- **Frontend**: `https://your-frontend-domain.vercel.app`
+- **Backend API**: `https://your-backend-api.onrender.com`
 
 ---
 
-## 🛠️ Project Structure
+## Architecture Overview
 
-```
-SnapFetch/
-├── backend/
-│   ├── bin/               # Local binaries (yt-dlp, ffmpeg)
-│   ├── config/            # Application & binary configurations
-│   ├── controllers/       # Media & download route controllers
-│   ├── middleware/        # Error handlers & request validators
-│   ├── routes/            # REST API endpoints
-│   ├── services/          # Queue manager, SSE service, yt-dlp service
-│   ├── utils/             # Media normalizers & logger
-│   └── server.js          # Express entrypoint
-├── frontend/
-│   ├── public/            # Static assets & web app manifest
-│   ├── src/
-│   │   ├── components/    # Reusable UI components (Button, Card, Input, etc.)
-│   │   ├── context/       # Download, Theme, and Toast state providers
-│   │   ├── pages/         # Home, Download, RequestPlatform, NotFound
-│   │   ├── services/      # Axios API client & SSE event source manager
-│   │   └── App.jsx        # Routing & layout shell
-│   └── vite.config.js     # Vite & Tailwind configuration
-└── downloads/             # Temporary downloaded media storage
-```
+- **Frontend**: React SPA built with Vite and Tailwind CSS. Connects to backend endpoints and listens to Server-Sent Events (SSE) for job status.
+- **Backend**: Node.js and Express REST API. Manages a FIFO task queue and interfaces with command-line media utilities for processing.
+- **Queue Manager**: Restricts active jobs to manage memory and CPU overhead.
+- **Storage Daemon**: Automatically removes temporary files on a scheduled interval.
 
 ---
 
-## 🚀 Getting Started
+## Deployment Guide
+
+### 1. Backend (Render)
+
+Render runs the Node.js application inside a container with the required CLI tools installed.
+
+1. Create a **Web Service** on Render connected to this repository.
+2. Set **Root Directory** to `backend`.
+3. Select **Docker** as the runtime (uses `backend/Dockerfile`).
+4. Add the following Environment Variables:
+   - `PORT`: `5000`
+   - `NODE_ENV`: `production`
+   - `CLIENT_URL`: `https://your-frontend.vercel.app`
+   - `DOWNLOAD_DIRECTORY`: `./downloads`
+   - `LOG_LEVEL`: `info`
+5. Deploy the service and record the generated service URL.
+
+### 2. Frontend (Vercel)
+
+1. Create a **New Project** on Vercel importing this repository.
+2. Set **Root Directory** to `frontend`.
+3. Framework Preset: **Vite**.
+4. Configure Environment Variables:
+   - `VITE_API_URL`: `https://your-backend-api.onrender.com/api/v1`
+   - `VITE_EMAILJS_SERVICE_ID`: your service ID
+   - `VITE_EMAILJS_TEMPLATE_ID`: your template ID
+   - `VITE_EMAILJS_PUBLIC_KEY`: your public key
+5. Deploy the project and update the backend's `CLIENT_URL` to match your Vercel URL.
+
+---
+
+## Local Development
 
 ### Prerequisites
+- Node.js (v18+)
+- Local media processing utilities in system PATH
 
-- [Node.js](https://nodejs.org/) (v18 or higher recommended)
-- [yt-dlp](https://github.com/yt-dlp/yt-dlp) and [FFmpeg](https://ffmpeg.org/) (installed in system PATH or placed inside `backend/bin/`)
-
-### 1. Backend Setup
-
+### Running Backend
 ```bash
 cd backend
 npm install
-cp .env.example .env
-```
-
-Configure your `.env` file:
-```env
-PORT=5000
-NODE_ENV=development
-CLIENT_URL=http://localhost:5173
-YT_DLP_PATH=           # Leave blank to use system PATH, or specify path
-FFMPEG_PATH=           # Leave blank to use system PATH, or specify path
-DOWNLOAD_DIRECTORY=./downloads
-LOG_LEVEL=info
-```
-
-Start the backend server:
-```bash
 node server.js
 ```
-Backend will run at `http://localhost:5000`.
 
-### 2. Frontend Setup
-
+### Running Frontend
 ```bash
 cd frontend
 npm install
-cp .env.example .env
-```
-
-Configure `frontend/.env`:
-```env
-VITE_API_URL=http://localhost:5000/api/v1
-VITE_EMAILJS_SERVICE_ID=your_service_id
-VITE_EMAILJS_TEMPLATE_ID=your_template_id
-VITE_EMAILJS_PUBLIC_KEY=your_public_key
-```
-
-Start the frontend development server:
-```bash
 npm run dev
 ```
-Frontend will run at `http://localhost:5173`.
 
 ---
 
-## 🧪 Build & Lint Checks
+## License & Usage
 
-- **Frontend Build**: `cd frontend && npm run build`
-- **Frontend Lint**: `cd frontend && npm run lint`
-
----
-
-## 📄 License
-
-MIT License. Designed and developed with ❤️ for fast, reliable media downloads.
+- **Code License**: MIT License.
+- **Usage Scope**: Designed for personal media backup, stream diagnostics, and format transcoding. Users must ensure compliance with third-party service terms and local copyright laws.
