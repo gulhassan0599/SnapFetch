@@ -71,19 +71,27 @@ export const extractQualities = (formats = []) => {
 
   videoFormats.forEach((format) => {
     const rawHeight = format.height;
+    const rawWidth = format.width;
 
-    // 1. Direct standard height match
-    if (rawHeight && targetHeights.includes(rawHeight)) {
-      const existing = foundHeights.get(rawHeight);
+    // Determine the actual resolution dimension.
+    // For vertical videos (Instagram Reels, TikTok: height > width, e.g. 1080x1920),
+    // the video resolution quality is governed by the short edge (width = 1080p).
+    let effectiveHeight = rawHeight;
+    if (rawHeight && rawWidth && rawHeight > rawWidth) {
+      effectiveHeight = rawWidth; // Use short dimension (1080 for 1080x1920)
+    }
+
+    if (effectiveHeight && targetHeights.includes(effectiveHeight)) {
+      const existing = foundHeights.get(effectiveHeight);
       const currentSize = format.filesize || format.filesize_approx || 0;
       const existingSize = existing ? (existing.filesize || existing.filesize_approx || 0) : 0;
       if (!existing || currentSize > existingSize) {
-        foundHeights.set(rawHeight, format);
+        foundHeights.set(effectiveHeight, format);
       }
-    } else if (rawHeight && rawHeight > 0) {
-      // 2. Non-standard aspect ratios (e.g. Instagram Reels, vertical formats)
+    } else if (effectiveHeight && effectiveHeight > 0) {
+      // Map to nearest standard target
       const closest = targetHeights.reduce((prev, curr) =>
-        Math.abs(curr - rawHeight) < Math.abs(prev - rawHeight) ? curr : prev
+        Math.abs(curr - effectiveHeight) < Math.abs(prev - effectiveHeight) ? curr : prev
       );
       if (!foundHeights.has(closest)) {
         foundHeights.set(closest, format);
@@ -91,7 +99,7 @@ export const extractQualities = (formats = []) => {
     }
   });
 
-  // Fallback: If no heights matched but video streams exist (e.g. single direct mp4 stream)
+  // Fallback: If no heights matched but video streams exist
   if (foundHeights.size === 0 && videoFormats.length > 0) {
     const bestFormat = videoFormats[videoFormats.length - 1];
     foundHeights.set(720, bestFormat);

@@ -70,9 +70,15 @@ export const downloadService = {
         '--user-agent', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/122.0.0.0 Safari/537.36'
       ];
 
-      // YouTube specific: Use android client extractor to bypass bot check on cloud hosts
+      // YouTube specific: Use multiple client fallbacks (mweb, android, ios)
       if (/youtube\.com|youtu\.be/i.test(job.url)) {
-        args.push('--extractor-args', 'youtube:player_client=android,web');
+        args.push('--extractor-args', 'youtube:player_client=mweb,android,ios');
+      }
+
+      // Check for cookies file
+      const cookiesPath = process.env.COOKIES_PATH || path.resolve(process.cwd(), 'cookies.txt');
+      if (fs.existsSync(cookiesPath)) {
+        args.push('--cookies', cookiesPath);
       }
 
       if (job.format === 'video') {
