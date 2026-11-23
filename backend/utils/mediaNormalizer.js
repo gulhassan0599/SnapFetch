@@ -64,18 +64,38 @@ export const extractQualities = (formats = []) => {
     }
   });
 
-  formats.forEach((format) => {
-    if (format.height && targetHeights.includes(format.height)) {
-      const existing = foundHeights.get(format.height);
+  // Filter video formats (must have video codec)
+  const videoFormats = formats.filter(
+    (f) => f.vcodec && f.vcodec !== 'none'
+  );
+
+  videoFormats.forEach((format) => {
+    const rawHeight = format.height;
+
+    // 1. Direct standard height match
+    if (rawHeight && targetHeights.includes(rawHeight)) {
+      const existing = foundHeights.get(rawHeight);
       const currentSize = format.filesize || format.filesize_approx || 0;
       const existingSize = existing ? (existing.filesize || existing.filesize_approx || 0) : 0;
-      
-      // Store format with largest file size (typically indicates better bitrate)
       if (!existing || currentSize > existingSize) {
-        foundHeights.set(format.height, format);
+        foundHeights.set(rawHeight, format);
+      }
+    } else if (rawHeight && rawHeight > 0) {
+      // 2. Non-standard aspect ratios (e.g. Instagram Reels, vertical formats)
+      const closest = targetHeights.reduce((prev, curr) =>
+        Math.abs(curr - rawHeight) < Math.abs(prev - rawHeight) ? curr : prev
+      );
+      if (!foundHeights.has(closest)) {
+        foundHeights.set(closest, format);
       }
     }
   });
+
+  // Fallback: If no heights matched but video streams exist (e.g. single direct mp4 stream)
+  if (foundHeights.size === 0 && videoFormats.length > 0) {
+    const bestFormat = videoFormats[videoFormats.length - 1];
+    foundHeights.set(720, bestFormat);
+  }
 
   // Sort heights descending (highest first)
   const sortedHeights = Array.from(foundHeights.keys()).sort((a, b) => b - a);
@@ -83,10 +103,9 @@ export const extractQualities = (formats = []) => {
   // Return formatted objects with value and accurate total size label
   return sortedHeights.map((h) => {
     const format = foundHeights.get(h);
-    const videoBytes = format.filesize || format.filesize_approx || 0;
+    const videoBytes = format ? (format.filesize || format.filesize_approx || 0) : 0;
     
-    // If format is video-only (vcodec != none, acodec == none), add audio size for realistic combined total
-    const isVideoOnly = format.vcodec && format.vcodec !== 'none' && (!format.acodec || format.acodec === 'none');
+    const isVideoOnly = format && format.vcodec && format.vcodec !== 'none' && (!format.acodec || format.acodec === 'none');
     const totalBytes = isVideoOnly ? (videoBytes + bestAudioBytes) : videoBytes;
 
     let sizeStr = '';

@@ -22,14 +22,23 @@ export const mediaService = {
     logger.info(`[MediaService] Extracting metadata for: ${url}`);
 
     try {
-      const { stdout } = await ytDlpService.execute([
+      const args = [
         '--dump-single-json',
         '--flat-playlist',
         '--no-warnings',
         '--no-check-certificates',
         '--prefer-free-formats',
-        url
-      ], { timeout: 45000 });
+        '--user-agent', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/122.0.0.0 Safari/537.36'
+      ];
+
+      // YouTube specific: Use android/ios client extractor arguments to bypass bot challenge on cloud hosts
+      if (/youtube\.com|youtu\.be/i.test(url)) {
+        args.push('--extractor-args', 'youtube:player_client=android,web');
+      }
+
+      args.push(url);
+
+      const { stdout } = await ytDlpService.execute(args, { timeout: 45000 });
 
       const durationMs = Date.now() - start;
       logger.info(`[MediaService] Extraction successful in ${durationMs}ms`);

@@ -65,8 +65,15 @@ export const downloadService = {
       // 2. Prepare yt-dlp arguments
       const tempOutputPattern = path.join(config.downloadDir, `${jobId}.%(ext)s`);
       const args = [
-        '--newline' // Force progress on newlines to parse easily
+        '--newline', // Force progress on newlines to parse easily
+        '--no-check-certificates',
+        '--user-agent', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/122.0.0.0 Safari/537.36'
       ];
+
+      // YouTube specific: Use android client extractor to bypass bot check on cloud hosts
+      if (/youtube\.com|youtu\.be/i.test(job.url)) {
+        args.push('--extractor-args', 'youtube:player_client=android,web');
+      }
 
       if (job.format === 'video') {
         let height = job.quality ? job.quality.toLowerCase().replace('p', '') : '1080';
