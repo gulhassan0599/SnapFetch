@@ -26,8 +26,10 @@ export const mediaService = {
         '--dump-single-json',
         '--flat-playlist',
         '--no-warnings',
+        '--no-check-certificates',
+        '--prefer-free-formats',
         url
-      ], { timeout: 30000 });
+      ], { timeout: 45000 });
 
       const durationMs = Date.now() - start;
       logger.info(`[MediaService] Extraction successful in ${durationMs}ms`);
@@ -76,9 +78,9 @@ export const mediaService = {
         extractor: rawData.extractor || 'unknown'
       };
     } catch (error) {
-      if (error instanceof ExpressError) throw error;
+      if (error instanceof ExpressError && error.statusCode !== 500) throw error;
 
-      let statusCode = 500;
+      let statusCode = 400;
       let errorMessage = 'Failed to retrieve media information';
       const errorStr = (error.message || '').toLowerCase();
 
@@ -88,18 +90,28 @@ export const mediaService = {
       } else if (errorStr.includes('private')) {
         statusCode = 403;
         errorMessage = 'This media is private and cannot be accessed';
-      } else if (errorStr.includes('removed') || errorStr.includes('deleted')) {
+      } else if (errorStr.includes('removed') || errorStr.includes('deleted') || errorStr.includes('not available')) {
         statusCode = 404;
-        errorMessage = 'This media has been removed or deleted';
-      } else if (errorStr.includes('sign in') || errorStr.includes('age-gated') || errorStr.includes('confirm your age')) {
+        errorMessage = 'This media has been removed or is unavailable';
+      } else if (errorStr.includes('sign in') || errorStr.includes('age-gated') || errorStr.includes('confirm your age') || errorStr.includes('bot')) {
         statusCode = 403;
-        errorMessage = 'This media is age-restricted and requires authentication';
+        errorMessage = 'This platform is blocking automated requests or requires user sign-in';
       } else if (errorStr.includes('timed out')) {
         statusCode = 504;
-        errorMessage = 'The connection to the media host timed out';
+        errorMessage = 'The connection to the media host timed out. Please try again.';
+      } else if (error.message) {
+        // Clean extractor error message to show helpful message to client
+        const cleanMsg = error.message
+          .replace(/Command failed with exit code \d+\.?/i, '')
+          .replace(/ERROR:\s*/i, '')
+          .replace(/Executable binary not found:.*/i, 'Media extractor engine is not configured properly on the server.')
+          .trim();
+        if (cleanMsg) {
+          errorMessage = cleanMsg;
+        }
       }
 
-      logger.error(`[MediaService] Extraction failed: ${errorMessage}. Details: ${error.message}`);
+      logger.error(`[MediaService] Extraction failed: ${errorMessage}. Raw: ${error.message}`);
       throw new ExpressError(statusCode, errorMessage);
     }
   }
