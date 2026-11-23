@@ -18,11 +18,36 @@ const app = express();
 // Security HTTP headers
 app.use(helmet());
 
-// Enable CORS with configured Client URL
+// Dynamic CORS configuration
+const allowedOrigins = (config.clientUrl || '')
+  .split(',')
+  .map(url => url.trim().replace(/\/+$/, ''))
+  .filter(Boolean);
+
 app.use(cors({
-  origin: config.clientUrl,
-  credentials: true
+  origin: (origin, callback) => {
+    // Allow non-browser requests (e.g. server-to-server, curl)
+    if (!origin) return callback(null, true);
+
+    const normalizedOrigin = origin.replace(/\/+$/, '');
+
+    // Allow configured origins or common localhost ports in dev
+    const isAllowed = allowedOrigins.includes(normalizedOrigin) ||
+      (config.nodeEnv === 'development' && /^http:\/\/localhost(:\d+)?$/.test(normalizedOrigin));
+
+    if (isAllowed) {
+      callback(null, true);
+    } else {
+      callback(new Error(`Origin ${origin} is not allowed by CORS`));
+    }
+  },
+  credentials: true,
+  methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS'],
+  allowedHeaders: ['Content-Type', 'Authorization', 'X-Requested-With', 'Accept']
 }));
+
+// Handle preflight OPTIONS requests explicitly
+app.options('*', cors());
 
 // Request parsers with size limits
 app.use(express.json({ limit: '10mb' }));
