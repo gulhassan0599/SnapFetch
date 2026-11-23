@@ -5,6 +5,7 @@ import { DownloadProvider } from './context/DownloadContext';
 import { ToastProvider } from './context/ToastContext';
 import Navbar from './components/layout/Navbar';
 import Footer from './components/layout/Footer';
+import MobileBottomNav from './components/layout/MobileBottomNav';
 import Loader from './components/common/Loader';
 
 // Lazy-load page bundles
@@ -44,6 +45,9 @@ function App() {
 
               {/* Layout Footer */}
               <Footer />
+
+              {/* Mobile App Bottom Navigation Bar */}
+              <MobileBottomNav />
             </div>
           </Router>
         </DownloadProvider>
