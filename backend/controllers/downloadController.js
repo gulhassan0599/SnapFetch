@@ -91,11 +91,22 @@ export const downloadFile = asyncHandler(async (req, res) => {
     throw new ExpressError(410, 'Download link has expired and the file was removed. Please download again.');
   }
 
-  const safeFilename = encodeURIComponent(job.filename);
-  res.setHeader('Content-Disposition', `attachment; filename="${job.filename}"; filename*=UTF-8''${safeFilename}`);
+  // Create an ASCII-only fallback filename for legacy HTTP headers
+  const asciiFallback = (job.filename || 'download')
+    .replace(/[^\x20-\x7E]/g, '') // Strip non-ASCII characters (emojis, Unicode, etc.)
+    .replace(/["\\]/g, '')        // Strip quote and backslash characters
+    .trim() || 'media_file';
+
+  // RFC 5987 compliant UTF-8 encoded filename for modern browsers
+  const encodedFilename = encodeURIComponent(job.filename || 'download');
+
+  res.setHeader(
+    'Content-Disposition',
+    `attachment; filename="${asciiFallback}"; filename*=UTF-8''${encodedFilename}`
+  );
 
   res.download(job.filepath, job.filename, (err) => {
-    if (err) {
+    if (err && !res.headersSent) {
       logger.error(`[DownloadController] Error transferring file ${job.filepath}: ${err.message}`);
     }
   });

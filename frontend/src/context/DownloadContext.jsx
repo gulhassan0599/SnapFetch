@@ -54,16 +54,19 @@ export const DownloadProvider = ({ children }) => {
     } else if (eventName === 'job-completed') {
       showToast(`Download completed: ${data.filename || currentJob?.filename || 'File'}! Starting transfer...`, 'success');
       
-      // Auto-trigger direct download in native browser download shelf
+      // Auto-trigger direct download using an invisible iframe to prevent navigating away from the page
       const backendUrl = import.meta.env.VITE_API_URL || 'http://localhost:5000/api/v1';
       const downloadUrl = `${backendUrl}/downloads/${jobId}/file`;
       
-      const link = document.createElement('a');
-      link.href = downloadUrl;
-      link.setAttribute('download', data.filename || currentJob?.filename || '');
-      document.body.appendChild(link);
-      link.click();
-      document.body.removeChild(link);
+      const iframe = document.createElement('iframe');
+      iframe.style.display = 'none';
+      iframe.src = downloadUrl;
+      document.body.appendChild(iframe);
+      setTimeout(() => {
+        try {
+          document.body.removeChild(iframe);
+        } catch (_) {}
+      }, 30000);
     } else if (eventName === 'job-failed') {
       const errMsg = data.error || 'Execution error';
       showToast(`Download failed: ${errMsg}`, 'error');
