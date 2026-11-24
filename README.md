@@ -4,7 +4,7 @@ A web application for media processing, format conversion, and stream analysis w
 
 ## Live Deployments
 
-- **Frontend**: `https://snapfetch-app.vercel.app/`
+- **Frontend**: `https://mysnapfetch.vercel.app/`
 - **Backend API**: `https://snapfetch-7t1k.onrender.com`
 
 ---
