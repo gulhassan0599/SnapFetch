@@ -85,11 +85,21 @@ export const downloadService = {
         let height = job.quality ? job.quality.toLowerCase().replace('p', '') : '1080';
         if (height === '4k') height = '2160';
         if (height === '2k') height = '1440';
+
+        // Prefer standard MP4-compatible streams (AVC/h264 video + AAC/m4a audio)
+        // Fall back to bestvideo+bestaudio or best pre-merged
         args.push(
-          '-f', `bestvideo[height<=${height}]+bestaudio/best[height<=${height}]`,
+          '-f', `bestvideo[height<=${height}][ext=mp4]+bestaudio[ext=m4a]/bestvideo[height<=${height}]+bestaudio[ext=m4a]/bestvideo[height<=${height}]+bestaudio/best[height<=${height}]/best`,
           '--merge-output-format', job.container.toLowerCase(),
           '-o', tempOutputPattern
         );
+
+        // Ensure audio track inside MP4 container is ALWAYS encoded as AAC
+        // Fixes silent audio on Windows Media Player, Apple QuickTime/iOS, and mobile players
+        // when yt-dlp merges an Opus/WebM audio stream into an MP4 container.
+        if (job.container.toLowerCase() === 'mp4') {
+          args.push('--postprocessor-args', 'Merger:-c:v copy -c:a aac');
+        }
       } else {
         // Audio extraction
         args.push(
