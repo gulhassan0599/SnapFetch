@@ -2,6 +2,7 @@ import React, { useState } from 'react';
 import { Link } from 'react-router-dom';
 import { Card } from '../components/common/Card';
 import { Button } from '../components/common/Button';
+import { YouTubeNoticeModal } from '../components/common/YouTubeNoticeModal';
 import {
   FiZap,
   FiLayers,
@@ -29,6 +30,7 @@ import { FaLinkedinIn } from 'react-icons/fa6';
 
 export const Home = () => {
   const [openFaq, setOpenFaq] = useState(null);
+  const [showYouTubeModal, setShowYouTubeModal] = useState(false);
 
   const toggleFaq = (index) => {
     setOpenFaq((prev) => (prev === index ? null : index));
@@ -74,7 +76,7 @@ export const Home = () => {
   ];
 
   const websites = [
-    { name: 'YouTube', icon: FiYoutube, color: 'text-red-600 dark:text-red-500' },
+    { name: 'YouTube', icon: FiYoutube, color: 'text-red-600 dark:text-red-500', isPaused: true },
     { name: 'Instagram', icon: FiInstagram, color: 'text-pink-500' },
     { name: 'TikTok', icon: SiTiktok, color: 'text-slate-900 dark:text-white' },
     { name: 'Facebook', icon: SiFacebook, color: 'text-blue-700 dark:text-blue-600' },
@@ -214,8 +216,16 @@ export const Home = () => {
               return (
                 <div
                   key={idx}
-                  className="bg-white dark:bg-slate-900 border border-slate-200/50 dark:border-slate-700/60 rounded-2xl p-5 flex flex-col items-center justify-center space-y-3 shadow-sm hover:shadow transition-all hover:-translate-y-0.5"
+                  onClick={() => web.isPaused && setShowYouTubeModal(true)}
+                  className={`relative bg-white dark:bg-slate-900 border border-slate-200/50 dark:border-slate-700/60 rounded-2xl p-5 flex flex-col items-center justify-center space-y-3 shadow-sm hover:shadow transition-all hover:-translate-y-0.5 ${
+                    web.isPaused ? 'cursor-pointer hover:border-amber-300 dark:hover:border-amber-800' : ''
+                  }`}
                 >
+                  {web.isPaused && (
+                    <span className="absolute top-2.5 right-2.5 text-[9px] font-extrabold uppercase tracking-wider px-2 py-0.5 rounded-full bg-amber-100 dark:bg-amber-950/60 text-amber-700 dark:text-amber-400 border border-amber-200/60 dark:border-amber-900/50">
+                      Paused
+                    </span>
+                  )}
                   <Icon size={32} className={web.color} />
                   <span className="text-sm font-bold text-slate-800 dark:text-slate-200 text-center">{web.name}</span>
                 </div>
@@ -316,6 +326,12 @@ export const Home = () => {
           })}
         </div>
       </section>
+
+      {/* YouTube Service Notice Modal */}
+      <YouTubeNoticeModal
+        isOpen={showYouTubeModal}
+        onClose={() => setShowYouTubeModal(false)}
+      />
 
     </div>
   );

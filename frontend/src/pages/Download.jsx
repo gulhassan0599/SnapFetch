@@ -7,6 +7,7 @@ import { Button } from "../components/common/Button";
 import { Input } from "../components/common/Input";
 import { SkeletonCard } from "../components/common/Skeleton";
 import { ProgressBar } from "../components/common/ProgressBar";
+import { YouTubeNoticeModal } from "../components/common/YouTubeNoticeModal";
 import {
   FiLink,
   FiVideo,
@@ -52,6 +53,7 @@ export const Download = () => {
   const [selectedFormat, setSelectedFormat] = useState("video"); // video, audio
   const [errorInput, setErrorInput] = useState("");
   const [dismissedJobId, setDismissedJobId] = useState(null);
+  const [showYouTubeModal, setShowYouTubeModal] = useState(false);
 
   // Dynamically set default format selectors once metadata loads
   useEffect(() => {
@@ -85,6 +87,14 @@ export const Download = () => {
         setErrorInput("URL protocol must be http or https");
         return;
       }
+
+      // Check if YouTube link is entered: show friendly notice popup
+      if (/youtube\.com|youtu\.be/i.test(searchUrl.trim())) {
+        setErrorInput("");
+        setShowYouTubeModal(true);
+        return;
+      }
+
       setErrorInput("");
       fetchMetadata(searchUrl);
     },
@@ -669,6 +679,12 @@ export const Download = () => {
           </div>
         )}
       </div>
+
+      {/* YouTube Service Notice Modal */}
+      <YouTubeNoticeModal
+        isOpen={showYouTubeModal}
+        onClose={() => setShowYouTubeModal(false)}
+      />
     </div>
   );
 };
