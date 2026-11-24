@@ -10,6 +10,7 @@ backend/.env
 frontend/.env
 cookies.txt
 backend/cookies.txt
+backend/cookie_base64.txt
 
 # Build Artifacts
 dist/
