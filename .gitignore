@@ -8,6 +8,8 @@ frontend/node_modules/
 .env*.local
 backend/.env
 frontend/.env
+cookies.txt
+backend/cookies.txt
 
 # Build Artifacts
 dist/
