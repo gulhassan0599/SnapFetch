@@ -6,7 +6,6 @@ SnapFetch is a modern full-stack web application designed for fast, high-quality
 
 ### Live Application
 - **Frontend App**: [https://mysnapfetch.vercel.app](https://mysnapfetch.vercel.app)
-- **Alternate Domain**: [https://snapfetch-app.vercel.app](https://snapfetch-app.vercel.app)
 - **Backend Service**: [https://snapfetch-7t1k.onrender.com](https://snapfetch-7t1k.onrender.com)
 
 ---
