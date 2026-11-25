@@ -1,20 +1,44 @@
 # SnapFetch — Universal Media Downloader & Stream Processor
+An Ultra-Fast Full-Stack Media Extraction & Real-Time Telemetry Platform
 
-SnapFetch is a modern full-stack web application designed for fast, high-quality media extraction, format transcoding, and real-time telemetry streaming.
+[![Live Demo](https://img.shields.io/badge/Live%20Demo-Vercel-00F0FF?style=for-the-badge&logo=vercel&logoColor=black)](https://mysnapfetch.vercel.app/)
+[![Backend Status](https://img.shields.io/badge/Backend%20API-Render%20Docker-46E3B7?style=for-the-badge&logo=render&logoColor=white)](https://snapfetch-7t1k.onrender.com)
+[![License](https://img.shields.io/badge/License-MIT-blue?style=for-the-badge)](LICENSE)
+
+Every stream has a source. Every download deserves pure fidelity.
+
+[Explore Live App](https://mysnapfetch.vercel.app/) • [Key Features](#-key-features) • [Supported Platforms](#-supported-platforms) • [Architecture](#-system-architecture) • [Directory Structure](#-directory-structure) • [Installation](#-local-development-guide)
 
 ---
 
-### Live Application
-- **Frontend App**: [https://mysnapfetch.vercel.app](https://mysnapfetch.vercel.app)
-- **Backend Service**: [https://snapfetch-7t1k.onrender.com](https://snapfetch-7t1k.onrender.com)
+## 🌐 Supported Platforms
+
+SnapFetch provides native extraction and high-speed transcoding across thousands of portals:
+
+| Platform | Resolutions Supported | Audio Extraction | Highlights |
+| :--- | :---: | :---: | :--- |
+| **TikTok** | 1080p / 720p HD | MP3 (320kbps) | Clean video with zero watermark |
+| **Instagram** | 1080p / 720p HD | MP3 (320kbps) | Reels, Posts, and Carousels |
+| **Facebook** | 4K / 2K / 1080p / 720p | MP3 (320kbps) | Watch videos & public Reels |
+| **X (Twitter)** | 1080p / 720p HD | MP3 (320kbps) | Fast clip & thread downloads |
+| **YouTube** | 4K / 2K / 1080p / 720p | MP3 (320kbps) | Adaptive stream multiplexing |
+| **Reddit** | 1080p / 720p HD | MP3 (320kbps) | Automatic audio/video dash merging |
+| **Pinterest** | 1080p / 720p HD | MP3 (320kbps) | Video pins & story clips |
+| **SoundCloud** | Audio Only | MP3 (Original) | Lossless track streaming |
+| **Vimeo** | 4K / 1080p HD | MP3 (320kbps) | High-bitrate direct CDN streams |
+| **Twitch** | 1080p60 / 720p60 | MP3 (320kbps) | Stream clips & VOD segments |
+| **Dailymotion** | 1080p / 720p | MP3 (320kbps) | Standard & HD video streams |
+| **LinkedIn** | 1080p / 720p | MP3 (320kbps) | Shared corporate & feed videos |
+
+*...and 1000+ more video and audio platforms supported out-of-the-box.*
 
 ---
 
-## Key Features
+## ⚡ Key Features
 
-- **Universal Platform Compatibility**: Seamless media extraction across leading social and video portals, including TikTok, Instagram, Facebook, X (Twitter), YouTube, Reddit, Pinterest, SoundCloud, Twitch, Vimeo, and more.
+- **Universal Platform Compatibility**: Seamless media extraction across leading social and video portals worldwide.
 - **Adaptive Quality Selection**: Extract video at full native fidelity up to 4K, 2K, 1080p, and 720p, or convert directly to high-bitrate MP3 audio.
-- **Universal Audio Playback**: Built-in automatic AAC transcoding guarantees clear, reliable audio playback on Windows Media Player, iOS Safari, macOS QuickTime, and Android gallery apps.
+- **Universal Audio Playback**: Built-in automatic AAC transcoding guarantees clear, reliable audio playback on Windows Media Player, iOS Safari, macOS QuickTime, and Android gallery apps without silent audio bugs.
 - **Live Stream Telemetry**: Real-time progress updates, download speed indicators, and dynamic ETAs powered by Server-Sent Events (SSE).
 - **Native Mobile Experience**: Responsive design featuring an app-style bottom navigation bar, frosted glassmorphism elements, and light/dark theme modes.
 - **Smart Concurrency Queue**: FIFO task management protects system resources by handling active conversions sequentially.
@@ -22,7 +46,7 @@ SnapFetch is a modern full-stack web application designed for fast, high-quality
 
 ---
 
-## System Architecture
+## 🏗️ System Architecture
 
 ```
 [ Client Browser / Mobile Web ]
@@ -41,7 +65,7 @@ SnapFetch is a modern full-stack web application designed for fast, high-quality
 
 ---
 
-## Directory Structure
+## 📂 Directory Structure
 
 ```text
 SnapFetch/
@@ -75,7 +99,7 @@ SnapFetch/
 
 ---
 
-## Technologies Used
+## 🛠️ Technologies Used
 
 ### Client
 - **React 19**: Modern UI rendering engine.
@@ -95,7 +119,7 @@ SnapFetch/
 
 ---
 
-## Local Development Guide
+## 🚀 Local Development Guide
 
 ### Prerequisites
 - Node.js (version 18 or above)
@@ -120,7 +144,7 @@ The frontend starts on `http://localhost:5173`.
 
 ---
 
-## Cloud Deployment
+## ☁️ Cloud Deployment
 
 ### Backend (Render Docker)
 1. Create a new Web Service pointing to your repository.
@@ -136,7 +160,7 @@ The frontend starts on `http://localhost:5173`.
 
 ---
 
-## Author & Attribution
+## 📄 Author & Attribution
 
-Developed with care by **Gul Hassan**.
+Developed with care by **[Gul Hassan](https://github.com/gulhassan0599)**.  
 Distributed under the MIT open-source license.
