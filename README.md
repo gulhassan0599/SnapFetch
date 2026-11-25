@@ -1,4 +1,6 @@
-# SnapFetch — Universal Media Downloader & Stream Processor
+<div align="center">
+            
+# SnapFetch - Universal Media Downloader
 An Ultra-Fast Full-Stack Media Extraction & Real-Time Telemetry Platform
 
 [![Live Demo](https://img.shields.io/badge/Live%20Demo-Vercel-00F0FF?style=for-the-badge&logo=vercel&logoColor=black)](https://mysnapfetch.vercel.app/)
@@ -7,9 +9,10 @@ An Ultra-Fast Full-Stack Media Extraction & Real-Time Telemetry Platform
 
 Every stream has a source. Every download deserves pure fidelity.
 
-[Explore Live App](https://mysnapfetch.vercel.app/) • [Key Features](#-key-features) • [Supported Platforms](#-supported-platforms) • [Architecture](#-system-architecture) • [Directory Structure](#-directory-structure) • [Installation](#-local-development-guide)
+[Explore Live App](https://mysnapfetch.vercel.app/) • [Key Features](#-key-features) • [Supported Platforms](#-supported-platforms) • [System Architecture](#-system-architecture) • [Directory Structure](#-directory-structure) • [Installation](#-local-development-guide)
 
 ---
+</div>
 
 ## 🌐 Supported Platforms
 
